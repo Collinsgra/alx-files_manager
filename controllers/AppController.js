@@ -1,17 +1,36 @@
-// eslint
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
+/**
+ * Controller for handling application-level routes.
+ */
 class AppController {
-  static getStatus(request, response) {
-    response.status(200).json({ redis: redisClient.isAlive(), db: dbClient.isAlive() });
-  }
+    /**
+     * Returns the status of Redis and MongoDB.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     */
+    static getStatus(req, res) {
+        res.status(200).json({
+            redis: redisClient.isAlive(),
+            db: dbClient.isAlive(),
+        });
+    }
 
-  static async getStats(request, response) {
-    const usersNum = await dbClient.nbUsers();
-    const filesNum = await dbClient.nbFiles();
-    response.status(200).json({ users: usersNum, files: filesNum });
-  }
+    /**
+     * Returns statistics about users and files in the database.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     */
+    static async getStats(req, res) {
+        const users = await dbClient.nbUsers();
+        const files = await dbClient.nbFiles();
+
+        res.status(200).json({
+            users,
+            files,
+        });
+    }
 }
 
-module.exports = AppController;
+export default AppController;
